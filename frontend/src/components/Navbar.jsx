@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { Menu, MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from "lucide-react";
+import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 import { assets } from "../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
-
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate("");
+  const { user } = useUser();
+  const { openSignIn } = useClerk();
+  // !Return
   return (
     <nav className="h-20">
       <div className="fixed left-0 top-0 right-0 z-100 flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white transition-all">
@@ -22,29 +25,37 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <div className="hidden sm:flex items-center gap-4 md:gap-8 max-md:text-sm text-gray-800">
           <Link to="/" onClick={() => scrollTo(0, 0)}>
-            {" "}
-            Home{" "}
+            Home
           </Link>
           <Link to="/marketplace" onClick={() => scrollTo(0, 0)}>
-            {" "}
-            Marketplace{" "}
+            Marketplace
           </Link>
-          <Link to="/messages" onClick={() => scrollTo(0, 0)}>
-            {" "}
-            Messages{" "}
+          <Link
+            to={user ? "/messages" : "#"}
+            onClick={() => (user ? scrollTo(0, 0) : openSignIn())}
+          >
+            Messages
           </Link>
-          <Link to="my-listings" onClick={() => scrollTo(0, 0)}>
-            {" "}
-            My Listings{" "}
+          <Link
+            to={user ? "/my-listings" : "#"}
+            onClick={() => (user ? scrollTo(0, 0) : openSignIn())}
+          >
+            My Listings
           </Link>
         </div>
-
-        <div>
-          <button className="max-sm:hidden cursor-pointer px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full">
-            Login
-          </button>
-          <MenuIcon onClick={() => setMenuOpen(true)} className="sm:hidden" />
-        </div>
+        {!user ? (
+          <div>
+            <button
+              className="max-sm:hidden cursor-pointer px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full"
+              onClick={openSignIn}
+            >
+              Login
+            </button>
+            <MenuIcon onClick={() => setMenuOpen(true)} className="sm:hidden" />
+          </div>
+        ) : (
+          <UserButton />
+        )}
       </div>
       {/* Mobile Menu */}
       <div
@@ -54,22 +65,38 @@ const Navbar = () => {
       >
         <div className="flex flex-col items-center justify-center h-full text-xl font-semibold gap-6 p-4">
           <Link to="/" onClick={() => setMenuOpen(false)}>
-            {" "}
-            Home{" "}
+            Home
           </Link>
           <Link to="/marketplace" onClick={() => setMenuOpen(false)}>
-            {" "}
-            Marketplace{" "}
+            Marketplace
           </Link>
-          <Link to="/messages" onClick={() => setMenuOpen(false)}>
-            {" "}
-            Messages{" "}
+
+          <Link
+            to={user ? "/messages" : "#"}
+            onClick={() => {
+              {
+                !user && openSignIn();
+              }
+              setMenuOpen(false);
+            }}
+          >
+            Messages
           </Link>
-          <Link to="my-listings" onClick={() => setMenuOpen(false)}>
-            {" "}
-            My Listings{" "}
+          <Link
+            to={user ? "/my-listings" : "#"}
+            onClick={() => {
+              {
+                !user && openSignIn();
+              }
+              setMenuOpen(false);
+            }}
+          >
+            My Listings
           </Link>
-          <button className=" cursor-pointer px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full">
+          <button
+            className=" cursor-pointer px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full"
+            onClick={openSignIn}
+          >
             Login
           </button>
           <XIcon
