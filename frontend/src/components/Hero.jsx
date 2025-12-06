@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const Hero = () => {
   const [input, setInput] = useState("");
-  //   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const onSubmitHandler = (e) => {
